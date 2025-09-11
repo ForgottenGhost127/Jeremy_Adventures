@@ -2,31 +2,34 @@ using UnityEngine;
 using System;
 
 public class PlayerCoins : MonoBehaviour
-{    
-    #region Properties
-	#endregion
+{
+    public static PlayerCoins instance;
 
-	#region Fields
-	#endregion
+    [Header("Coins")]
+    [SerializeField] private int coins = 0;
 
-	#region Unity Callbacks
-	// Start is called before the first frame update
-	void Start()
+    public int Coins => coins;
+
+    private void Awake()
     {
-        
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void AddCoins(int amount)
     {
-        
+        coins += amount;
     }
-	#endregion
 
-	#region Public Methods
-	#endregion
+    public override string ToString()
+    {
+        return coins.ToString();
+    }
 
-	#region Private Methods
-	#endregion
-   
 }
