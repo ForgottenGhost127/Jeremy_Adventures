@@ -1,24 +1,20 @@
 using System;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class CameraFollow : MonoBehaviour
 {
     #region Fields
-    [Header("Target Settings")]
-    public Transform target;
-    public Vector3 offset;
+    [Header("Seguimiento")]
+    [SerializeField] private Transform target;
+    [SerializeField] private float smoothSpeed = 2f;
+    [SerializeField] private Vector3 offset = new Vector3(0, 2, -10);
 
-    [Header("Camera Movement")]
-    public float smoothSpeed = 0.125f;
-    public float valorOffsetX = 2f;
-
-    [Header("Follow Window")]
-    public float ventanaX = 5f;
-    public float ventanaY = 5f;
-
-    private GameObject player;
-   // private PlayerController pCon;
+    [Header("Límites (Opcional)")]
+    [SerializeField] private bool useLimits = false;
+    [SerializeField] private float minX = -10f;
+    [SerializeField] private float maxX = 10f;
+    [SerializeField] private float minY = -5f;
+    [SerializeField] private float maxY = 5f;
     #endregion
 
     #region Unity Callbacks
@@ -26,62 +22,55 @@ public class CameraFollow : MonoBehaviour
     {
         InitializeCamera();
     }
-
-    void FixedUpdate()
+    void LateUpdate()
     {
-        UpdateCameraPosition();
+        FollowTarget();
     }
+    #endregion
 
-    private void OnDrawGizmos()
+    #region Public Methods
+    public void SetTarget(Transform newTarget)
     {
-        DrawFollowWindowGizmos();
+        target = newTarget;
     }
-#endregion
+    #endregion
 
     #region Private Methods
     private void InitializeCamera()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (target == null)
         {
-            //pCon = player.GetComponent<PlayerController>();
-            target = player.transform;
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+                target = player.transform;
         }
-        else
+
+        if (target != null)
         {
-            Debug.LogError("Player not found!");
-        }
-    }
-
-    private void UpdateCameraPosition()
-    {
-        //if (target == null || pCon == null) return;
-
-        //offset = new Vector3(valorOffsetX * pCon.moveX, offset.y, offset.z);
-
-        float limitR = target.position.x + ventanaX + offset.x;
-        float limitL = target.position.x - ventanaX + offset.x;
-        float limitU = target.position.y + ventanaY + offset.y;
-        float limitD = target.position.y - ventanaY + offset.y;
-
-        float posX = transform.position.x;
-        float posY = transform.position.y;
-
-        if (posX > limitR || posX < limitL || posY > limitU || posY < limitD)
-        {
-            Vector3 desiredPosition = target.position + offset;
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-            transform.position = smoothedPosition;
+            Vector3 initialPosition = target.position + offset;
+            if (useLimits)
+            {
+                initialPosition.x = Mathf.Clamp(initialPosition.x, minX, maxX);
+                initialPosition.y = Mathf.Clamp(initialPosition.y, minY, maxY);
+            }
+            transform.position = initialPosition;
+            Debug.Log("Camera positioned at: " + transform.position + " - Target: " + target.name);
         }
     }
 
-    private void DrawFollowWindowGizmos()
+    private void FollowTarget()
     {
-        Gizmos.color = new Color(0, 1, 0, 0.5f);
-        Gizmos.DrawCube(transform.position, new Vector2(ventanaX, ventanaY) * 2);
+        if (target == null) return;
+        Vector3 desiredPosition = target.position + offset;
 
-        Gizmos.color = new Color(1, 0, 0, 0.5f);
-        Gizmos.DrawCube(transform.position - new Vector3(offset.x, offset.y, offset.z), new Vector2(ventanaX, ventanaY) * 2);
+        if (useLimits)
+        {
+            desiredPosition.x = Mathf.Clamp(desiredPosition.x, minX, maxX);
+            desiredPosition.y = Mathf.Clamp(desiredPosition.y, minY, maxY);
+        }
+
+        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        transform.position = smoothedPosition;
     }
     #endregion
 }
