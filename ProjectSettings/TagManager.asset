@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - Spawn1
+  - Spawn2
+  - EndDemo
   layers:
   - Default
   - TransparentFX
