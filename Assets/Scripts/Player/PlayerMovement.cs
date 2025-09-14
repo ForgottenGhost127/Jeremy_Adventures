@@ -6,7 +6,12 @@ public class PlayerMovement : MonoBehaviour
     #region Fields
     [Header("Movimiento")]
     [SerializeField] private float _moveSpeed = 5f;
+
+    [Header("Salto Variable")]
     [SerializeField] private float _jumpForce = 6f;
+    [SerializeField] private float _jumpHoldForce = 3f;
+    [SerializeField] private float _maxJumpTime = 0.4f;
+    [SerializeField] private float _jumpCutMultiplier = 0.5f;
 
     [Header("Audio")]
     [SerializeField] private AudioClip[] footstepSounds;
@@ -22,9 +27,11 @@ public class PlayerMovement : MonoBehaviour
     [Header("Input")]
     public float moveX;
     private bool isGrounded = false;
-
     private float footstepTimer = 0f;
     private bool wasMovingLastFrame = false;
+
+    private bool isJumping = false;
+    private float jumpTimeCounter = 0f;
     #endregion
 
     #region Unity Callbacks
@@ -33,13 +40,12 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
-
         audioSource = GetComponent<AudioSource>();
+
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
-
         audioSource.playOnAwake = false;
         audioSource.volume = footstepVolume;
     }
@@ -57,7 +63,6 @@ public class PlayerMovement : MonoBehaviour
     private void HandleMovement()
     {
         float moveInput = Input.GetAxis("Horizontal");
-        //Debug.Log("Move Input: " + moveInput);
         rb.velocity = new Vector2(moveInput * _moveSpeed, rb.velocity.y);
 
         if (moveInput > 0)
@@ -72,7 +77,36 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, _jumpForce);
             isGrounded = false;
+            isJumping = true;
+            jumpTimeCounter = 0f;
             anim.SetBool("IsJumping", true);
+        }
+
+        if (Input.GetKey(KeyCode.Space) && isJumping)
+        {
+            if (jumpTimeCounter < _maxJumpTime)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y + _jumpHoldForce * Time.deltaTime);
+                jumpTimeCounter += Time.deltaTime;
+            }
+            else
+            {
+                isJumping = false;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            if (isJumping && rb.velocity.y > 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * _jumpCutMultiplier);
+            }
+            isJumping = false;
+        }
+
+        if (rb.velocity.y <= 0)
+        {
+            isJumping = false;
         }
     }
 
@@ -126,6 +160,7 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            isJumping = false;
         }
     }
     #endregion

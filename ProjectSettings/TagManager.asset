@@ -8,6 +8,7 @@ TagManager:
   - Spawn1
   - Spawn2
   - EndDemo
+  - Teleporter
   layers:
   - Default
   - TransparentFX

@@ -4,17 +4,32 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     #region Fields
-    [Header("Seguimiento")]
-    [SerializeField] private Transform target;
-    [SerializeField] private float smoothSpeed = 2f;
-    [SerializeField] private Vector3 offset = new Vector3(0, 2, -10);
+    [Header("Target Settings")]
+    public Transform target;
+    public Vector3 offset;
 
-    [Header("Límites (Opcional)")]
-    [SerializeField] private bool useLimits = false;
-    [SerializeField] private float minX = -10f;
-    [SerializeField] private float maxX = 10f;
-    [SerializeField] private float minY = -5f;
-    [SerializeField] private float maxY = 5f;
+    [Header("Camera Movement")]
+    public float smoothSpeed = 0.125f;
+    public float valorOffsetX = 2f;
+
+    [Header("Follow Window")]
+    public float ventanaX = 5f;
+    public float ventanaY = 5f;
+
+    [Header("Look Down Settings")]
+    public KeyCode lookDownKey = KeyCode.S;
+    public float lookDownOffset = 8f;
+    public float lookDownSpeed = 2f;
+
+    [Header("Camera Limits")]
+    public bool useCameraLimits = true;
+    public float maxCameraY = 7f;
+    public float minCameraY = -10f;
+
+    private GameObject player;
+    private PlayerMovement pMov;
+    private bool isLookingDown = false;
+    private float currentLookDownOffset = 0f;
     #endregion
 
     #region Unity Callbacks
@@ -22,55 +37,126 @@ public class CameraFollow : MonoBehaviour
     {
         InitializeCamera();
     }
-    void LateUpdate()
+    void Update()
     {
-        FollowTarget();
+        HandleLookDownInput();
     }
-    #endregion
-
-    #region Public Methods
-    public void SetTarget(Transform newTarget)
+    void FixedUpdate()
     {
-        target = newTarget;
+        UpdateCameraPosition();
+    }
+    private void OnDrawGizmos()
+    {
+        DrawFollowWindowGizmos();
     }
     #endregion
 
     #region Private Methods
     private void InitializeCamera()
     {
-        if (target == null)
+        player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
         {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-                target = player.transform;
+            pMov = player.GetComponent<PlayerMovement>();
+            target = player.transform;
         }
-
-        if (target != null)
+        else
         {
-            Vector3 initialPosition = target.position + offset;
-            if (useLimits)
-            {
-                initialPosition.x = Mathf.Clamp(initialPosition.x, minX, maxX);
-                initialPosition.y = Mathf.Clamp(initialPosition.y, minY, maxY);
-            }
-            transform.position = initialPosition;
-            Debug.Log("Camera positioned at: " + transform.position + " - Target: " + target.name);
+            Debug.LogError("Player not found!");
         }
     }
 
-    private void FollowTarget()
+    private void HandleLookDownInput()
     {
-        if (target == null) return;
-        Vector3 desiredPosition = target.position + offset;
-
-        if (useLimits)
+        if (Input.GetKey(lookDownKey))
         {
-            desiredPosition.x = Mathf.Clamp(desiredPosition.x, minX, maxX);
-            desiredPosition.y = Mathf.Clamp(desiredPosition.y, minY, maxY);
+            if (!isLookingDown)
+            {
+                isLookingDown = true;
+            }
+        }
+        else
+        {
+            if (isLookingDown)
+            {
+                isLookingDown = false;
+            }
         }
 
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-        transform.position = smoothedPosition;
+        float targetLookDown = isLookingDown ? -lookDownOffset : 0f;
+        currentLookDownOffset = Mathf.Lerp(currentLookDownOffset, targetLookDown, lookDownSpeed * Time.deltaTime);
+    }
+
+    private void UpdateCameraPosition()
+    {
+        if (target == null || pMov == null) return;
+        Vector3 finalOffset = new Vector3(
+            valorOffsetX * pMov.moveX,
+            offset.y + currentLookDownOffset,
+            offset.z
+        );
+
+        float limitR = target.position.x + ventanaX + finalOffset.x;
+        float limitL = target.position.x - ventanaX + finalOffset.x;
+        float limitU = target.position.y + ventanaY + finalOffset.y;
+        float limitD = target.position.y - ventanaY + finalOffset.y;
+
+        float posX = transform.position.x;
+        float posY = transform.position.y;
+
+        if (posX > limitR || posX < limitL || posY > limitU || posY < limitD || isLookingDown)
+        {
+            Vector3 desiredPosition = target.position + finalOffset;
+            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+
+            if (useCameraLimits)
+            {
+                smoothedPosition.y = Mathf.Clamp(smoothedPosition.y, minCameraY, maxCameraY);
+            }
+
+            transform.position = smoothedPosition;
+        }
+    }
+
+    private void DrawFollowWindowGizmos()
+    {
+        Gizmos.color = new Color(0, 1, 0, 0.5f);
+        Gizmos.DrawCube(transform.position, new Vector2(ventanaX, ventanaY) * 2);
+        Vector3 finalOffset = new Vector3(
+            target != null && pMov != null ? valorOffsetX * pMov.moveX : offset.x,
+            offset.y + currentLookDownOffset,
+            offset.z
+        );
+        Gizmos.color = new Color(1, 0, 0, 0.5f);
+        Gizmos.DrawCube(transform.position - finalOffset, new Vector2(ventanaX, ventanaY) * 2);
+
+        if (isLookingDown)
+        {
+            Gizmos.color = new Color(1, 1, 0, 0.8f);
+            Gizmos.DrawLine(transform.position, transform.position + Vector3.down * lookDownOffset);
+        }
+
+        if (useCameraLimits)
+        {
+            Gizmos.color = new Color(1, 0, 1, 0.3f);
+            Gizmos.DrawLine(new Vector3(-100, maxCameraY, 0), new Vector3(100, maxCameraY, 0));
+            Gizmos.DrawLine(new Vector3(-100, minCameraY, 0), new Vector3(100, minCameraY, 0));
+        }
+    }
+    #endregion
+
+    #region Public Methods
+    public void SetLookDownKey(KeyCode newKey)
+    {
+        lookDownKey = newKey;
+    }
+    public void SetLookingDown(bool lookDown)
+    {
+        isLookingDown = lookDown;
+    }
+    public bool IsLookingDown()
+    {
+        return isLookingDown;
     }
     #endregion
 }

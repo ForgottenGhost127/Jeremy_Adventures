@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/UraVillage.unity
     guid: 1af5460720db43c46a817ea7abd2c137
+  - enabled: 1
+    path: Assets/Scenes/EndDemo.unity
+    guid: 42d5973b85491884a9f08c1fa94e2cbf
   m_configObjects: {}
