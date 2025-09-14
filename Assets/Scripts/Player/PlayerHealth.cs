@@ -2,31 +2,61 @@ using UnityEngine;
 using System;
 
 public class PlayerHealth : MonoBehaviour
-{    
+{
     #region Properties
-	#endregion
+    public float CurrentHealth { get; private set; }
+    #endregion
 
-	#region Fields
-	#endregion
+    #region Fields
+    [Header("Health Settings")]
+    [SerializeField] private float _maxHealth = 100f;
 
-	#region Unity Callbacks
-	// Start is called before the first frame update
-	void Start()
+    [Header("UI")]
+    [SerializeField] private GameObject _gameOverPanel;
+    #endregion
+
+    #region Unity Callbacks
+    void Start()
     {
-        
+        CurrentHealth = _maxHealth;
+
+        if (_gameOverPanel != null)
+            _gameOverPanel.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        // Prueba opcional para restar vida:
+        // if (Input.GetKeyDown(KeyCode.Space)) TakeDamage(20f);
     }
-	#endregion
+    #endregion
 
-	#region Public Methods
-	#endregion
+    #region Public Methods
+    public void TakeDamage(float amount)
+    {
+        CurrentHealth -= amount;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, _maxHealth);
 
-	#region Private Methods
-	#endregion
-   
+        if (CurrentHealth <= 0)
+            Die();
+    }
+
+    public void Heal(float amount)
+    {
+        CurrentHealth += amount;
+        CurrentHealth = Mathf.Clamp(CurrentHealth, 0, _maxHealth);
+    }
+    #endregion
+
+    #region Private Methods
+    private void Die()
+    {
+        Debug.Log("El jugador ha muerto");
+        if (_gameOverPanel != null)
+            _gameOverPanel.SetActive(true);
+
+        Time.timeScale = 0f;
+    }
+    #endregion
+
 }

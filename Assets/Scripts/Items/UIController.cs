@@ -19,12 +19,12 @@ public class UIController : MonoBehaviour
 	#region Unity Callbacks
 	void Start()
     {
-        
+        _healthSlider.maxValue = _playerHealth.CurrentHealth;
     }
 
     void Update()
     {
-		//_healthSlider.value = _playerHealth.CurrentHealth;
+		_healthSlider.value = _playerHealth.CurrentHealth;
 		_collectedCoins.text = _playerCoins.ToString();
     }
 	#endregion
