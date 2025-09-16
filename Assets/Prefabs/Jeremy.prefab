@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4207140833341570692}
   - component: {fileID: 844108813702839832}
+  - component: {fileID: 8527545583660428802}
   - component: {fileID: 4964189315372263591}
   - component: {fileID: 4072412227210124334}
   - component: {fileID: 8353080179153521760}
@@ -177,6 +178,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8527545583660428802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5336018719720968722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a8aff185cab4843897ae7c53626586, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponAnimator: {fileID: 3133930148315455038}
+  attackCooldown: 1
 --- !u!114 &4964189315372263591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,6 +368,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6987753040188516907}
+  - component: {fileID: 3133930148315455038}
   m_Layer: 0
   m_Name: WeaponHolder
   m_TagString: Untagged
@@ -376,3 +392,24 @@ Transform:
   - {fileID: 1916408227975885053}
   m_Father: {fileID: 4207140833341570692}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &3133930148315455038
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6147190901682353996}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 109d15781734385498616f9630883a3f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

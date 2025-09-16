@@ -9,6 +9,7 @@ TagManager:
   - Spawn2
   - EndDemo
   - Teleporter
+  - Enemy
   layers:
   - Default
   - TransparentFX

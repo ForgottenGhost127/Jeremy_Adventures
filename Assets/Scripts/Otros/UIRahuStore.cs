@@ -1,3 +1,4 @@
+using Inventory;
 using System;
 using TMPro;
 using UnityEngine;
@@ -22,12 +23,13 @@ public class UIRahuStore : MonoBehaviour
     {
         _collectedCoins.text = _playerCoins.ToString();
     }
-	#endregion
+    #endregion
 
-	#region Public Methods
-	#endregion
+    #region Public Methods
+    
+    #endregion
 
-	#region Private Methods
-	#endregion
-   
+    #region Private Methods
+    #endregion
+
 }

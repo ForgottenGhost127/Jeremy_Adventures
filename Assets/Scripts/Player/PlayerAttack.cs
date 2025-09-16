@@ -1,32 +1,64 @@
 using UnityEngine;
 using System;
+using Inventory;
 
 public class PlayerAttack : MonoBehaviour
-{    
-    #region Properties
-	#endregion
+{
+    #region Fields
+    [Header("Attack Settings")]
+    public Animator weaponAnimator;
+    public float attackCooldown = 1f;
 
-	#region Fields
-	#endregion
+    private float lastAttackTime;
+    #endregion
 
-	#region Unity Callbacks
-	// Start is called before the first frame update
-	void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    #region Unity Callbacks
     void Update()
     {
-        
+        HandleAttackInput();
     }
-	#endregion
+    #endregion
 
-	#region Public Methods
-	#endregion
+    #region Public Methods
+    public void PerformAttack()
+    {
+        if (CanAttack())
+        {
+            weaponAnimator.SetTrigger("Attack");
+            int damage = InventorySystem.Instance.GetCurrentWeaponDamage();
+            Debug.Log($"¡Ataque! Daño: {damage}");
 
-	#region Private Methods
-	#endregion
-   
+            lastAttackTime = Time.time;
+        }
+    }
+    #endregion
+
+    #region Private Methods
+    private void HandleAttackInput()
+    {
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.L))
+        {
+            PerformAttack();
+        }
+    }
+
+    private bool CanAttack()
+    {
+        return Time.time >= lastAttackTime + attackCooldown;
+    }
+
+    private void DealDamage()
+    {
+        int damage = InventorySystem.Instance.GetCurrentWeaponDamage();
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 1f);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                hit.GetComponent<EnemyHealth>()?.TakeDamage(damage);
+            }
+        }
+    }
+    #endregion
+
 }

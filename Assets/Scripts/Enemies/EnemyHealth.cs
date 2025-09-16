@@ -2,31 +2,35 @@ using UnityEngine;
 using System;
 
 public class EnemyHealth : MonoBehaviour
-{    
-    #region Properties
-	#endregion
+{
+    #region Fields
+    public int maxHealth = 3;
+    private int currentHealth;
+    #endregion
 
-	#region Fields
-	#endregion
-
-	#region Unity Callbacks
-	// Start is called before the first frame update
-	void Start()
+    #region Unity Callbacks
+    void Start()
     {
-        
+        currentHealth = maxHealth;
     }
+    #endregion
 
-    // Update is called once per frame
-    void Update()
+    #region Public Methods
+    public void TakeDamage(int damage)
     {
-        
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
-	#endregion
+    #endregion
 
-	#region Public Methods
-	#endregion
+    #region Private Methods
+    private void Die()
+    {
+        Destroy(gameObject);
+    }
+    #endregion
 
-	#region Private Methods
-	#endregion
-   
 }
