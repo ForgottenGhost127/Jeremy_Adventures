@@ -26,11 +26,6 @@ public class EnemyAI : MonoBehaviour
     {
         rb.velocity = new Vector2(speed * (movingRight ? 1 : -1), rb.velocity.y);
         anim.SetBool("isWalking", Mathf.Abs(rb.velocity.x) > 0.1f);
-
-        if (!Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer))
-        {
-            Flip();
-        }
     }
     #endregion
 
@@ -38,6 +33,14 @@ public class EnemyAI : MonoBehaviour
     #endregion
 
     #region Private Methods
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("Platform"))
+        {
+            print("Colision.");
+            Flip();
+        }
+    }
     private void Flip()
     {
         movingRight = !movingRight;

@@ -10,6 +10,7 @@ TagManager:
   - EndDemo
   - Teleporter
   - Enemy
+  - Platform
   layers:
   - Default
   - TransparentFX

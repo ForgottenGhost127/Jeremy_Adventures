@@ -1278,7 +1278,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 126281950}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1684779363}
+        m_TargetAssemblyTypeName: UIRahuStore, Assembly-CSharp
+        m_MethodName: BuyUpgradedSword
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &126281950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5402,7 +5414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1684779359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5498,8 +5510,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f876021f53512ad429fddf1d77fd5465, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerCoins: {fileID: 4072412227210124334, guid: 2f113d8f4201faf45b81b33a0da9b11c, type: 3}
-  _collectedCoins: {fileID: 1674325972}
+  playerCoins: {fileID: 0}
+  collectedCoins: {fileID: 1674325972}
+  upgradedSword: {fileID: 11400000, guid: c91eccef5bfc3f14d97fda9d9bb8af7f, type: 2}
+  upgradedSwordPrice: 180
+  buyWeaponButton: {fileID: 126281949}
+  sellButtons: []
 --- !u!1 &1730211324
 GameObject:
   m_ObjectHideFlags: 0

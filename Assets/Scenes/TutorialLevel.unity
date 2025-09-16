@@ -619,7 +619,7 @@ MonoBehaviour:
   smoothSpeed: 0.024
   valorOffsetX: 9
   ventanaX: 2
-  ventanaY: 2
+  ventanaY: 1
   lookDownKey: 115
   lookDownOffset: 4
   lookDownSpeed: 2
