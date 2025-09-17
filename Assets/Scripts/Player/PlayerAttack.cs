@@ -25,7 +25,7 @@ public class PlayerAttack : MonoBehaviour
         if (CanAttack())
         {
             weaponAnimator.SetTrigger("Attack");
-            int damage = InventorySystem.Instance.GetCurrentWeaponDamage();
+            int damage = PlayerBuffs.Instance.GetModifiedAttackDamage();
             Debug.Log($"¡Ataque! Daño: {damage}");
 
             lastAttackTime = Time.time;
@@ -36,7 +36,7 @@ public class PlayerAttack : MonoBehaviour
     #region Private Methods
     private void HandleAttackInput()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             PerformAttack();
         }

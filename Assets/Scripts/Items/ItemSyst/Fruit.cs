@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Linq;
 using UnityEngine;
-using static UnityEditor.Progress;
+
 
 namespace Inventory
 {
@@ -45,13 +45,13 @@ namespace Inventory
         private void HealPlayer()
         {
             Debug.Log($"Curando {healAmount} puntos de vida con {itemName}");
-            // PlayerHealth.Instance.Heal(healAmount);
+            PlayerBuffs.Instance.Heal(healAmount);
         }
 
         private void BoostPlayerAttack()
         {
             Debug.Log($"Aumentando ataque x{attackBoostMultiplier} durante {attackBoostDuration} segundos");
-            // PlayerCombat.Instance.ApplyAttackBoost(attackBoostMultiplier, attackBoostDuration);
+            PlayerBuffs.Instance.ApplyAttackBoost(attackBoostMultiplier, attackBoostDuration);
         }
         #endregion
     }

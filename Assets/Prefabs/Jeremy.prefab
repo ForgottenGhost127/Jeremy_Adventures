@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 8353080179153521760}
   - component: {fileID: 197011301440331945}
   - component: {fileID: 6760720453799683324}
+  - component: {fileID: 2735663164861517479}
   - component: {fileID: 880687012534171520}
   - component: {fileID: 2442634058469742017}
   - component: {fileID: 4687966892665140379}
@@ -266,6 +267,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponSpriteRenderer: {fileID: 6716135378504701817}
+--- !u!114 &2735663164861517479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5336018719720968722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72a70700cabfb684a9678a79524cc006, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
 --- !u!61 &880687012534171520
 BoxCollider2D:
   m_ObjectHideFlags: 0

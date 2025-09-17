@@ -16,11 +16,15 @@ public class UIRahuStore : MonoBehaviour
 
     [Header("Items for Sale")]
     [SerializeField] private Weapon upgradedSword;
-    [SerializeField] private int upgradedSwordPrice = 100;
+    [SerializeField] private int upgradedSwordPrice = 180;
     [SerializeField] private Button buyWeaponButton;
 
-    [Header("Items to Sell")]
-    [SerializeField] private Button[] sellButtons;
+    [Header("Sell System")]
+    [SerializeField] private Button sellButton;
+    [SerializeField] private TextMeshProUGUI sellInfoText;
+
+    [Header("Navigation")]
+    [SerializeField] private Button cancelButton;
     #endregion
 
     #region Unity Callbacks
@@ -38,6 +42,7 @@ public class UIRahuStore : MonoBehaviour
         }
 
         UpdateButtonStates();
+        UpdateSellInfo();
     }
     #endregion
 
@@ -51,17 +56,26 @@ public class UIRahuStore : MonoBehaviour
         }
     }
 
-    public void SellItem(int itemType)
+    public void SellNextItem()
     {
-        switch (itemType)
+        var sellableItem = FindFirstSellableItem();
+
+        if (sellableItem.fruit != null)
         {
-            case 0:
-                SellFruitsByType(FruitType.Sellable);
-                break;
-            case 1:
-                SellFruitsByType(FruitType.Healing);
-                break;
+            int sellValue = sellableItem.fruit.sellValue;
+            InventorySystem.Instance.RemoveItem(sellableItem.fruit, 1);
+            playerCoins.AddCoins(sellValue);
+            Debug.Log($"Vendido {sellableItem.fruit.itemName} por {sellValue} monedas");
         }
+        else
+        {
+            Debug.Log("No tienes nada que vender");
+        }
+    }
+    public void CloseStore()
+    {
+        gameObject.SetActive(false);
+        Debug.Log("Tienda cerrada por botón Cancel");
     }
     #endregion
 
@@ -72,6 +86,16 @@ public class UIRahuStore : MonoBehaviour
         {
             buyWeaponButton.onClick.AddListener(BuyUpgradedSword);
         }
+
+        if (sellButton != null)
+        {
+            sellButton.onClick.AddListener(SellNextItem);
+        }
+
+        if (cancelButton != null)
+        {
+            cancelButton.onClick.AddListener(CloseStore);
+        }
     }
 
     private void UpdateButtonStates()
@@ -80,26 +104,44 @@ public class UIRahuStore : MonoBehaviour
         {
             buyWeaponButton.interactable = playerCoins.Coins >= upgradedSwordPrice;
         }
+
+        if (sellButton != null)
+        {
+            var sellableItem = FindFirstSellableItem();
+            sellButton.interactable = sellableItem.fruit != null;
+        }
     }
 
-    private void SellFruitsByType(FruitType fruitType)
+    private void UpdateSellInfo()
+    {
+        if (sellInfoText != null)
+        {
+            var sellableItem = FindFirstSellableItem();
+
+            if (sellableItem.fruit != null)
+            {
+                sellInfoText.text = $"Sell {sellableItem.fruit.itemName} for {sellableItem.fruit.sellValue} coins";
+            }
+            else
+            {
+                sellInfoText.text = "No items to sell";
+            }
+        }
+    }
+
+    private (Fruit fruit, int quantity) FindFirstSellableItem()
     {
         var allItems = InventorySystem.Instance.GetAllItems();
 
         foreach (var slot in allItems)
         {
-            if (slot.item is Fruit fruit && fruit.fruitType == fruitType)
+            if (slot.item is Fruit fruit && fruit.sellValue > 0)
             {
-                int sellValue = fruit.sellValue;
-                if (sellValue > 0)
-                {
-                    InventorySystem.Instance.RemoveItem(slot.item, 1);
-                    playerCoins.AddCoins(sellValue);
-                    Debug.Log($"Vendido {fruit.itemName} por {sellValue} monedas");
-                    break;
-                }
+                return (fruit, slot.quantity);
             }
         }
+
+        return (null, 0);
     }
     #endregion
 
