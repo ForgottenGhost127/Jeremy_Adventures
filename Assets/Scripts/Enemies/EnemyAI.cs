@@ -40,6 +40,16 @@ public class EnemyAI : MonoBehaviour
             print("Colision.");
             Flip();
         }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(10f);
+            }
+        }
+
     }
     private void Flip()
     {
@@ -48,6 +58,7 @@ public class EnemyAI : MonoBehaviour
         scale.x *= -1;
         transform.localScale = scale;
     }
+
     #endregion
 
 }

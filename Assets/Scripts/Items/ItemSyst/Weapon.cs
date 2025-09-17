@@ -32,7 +32,6 @@ namespace Inventory
         private void EquipWeapon()
         {
             Debug.Log($"Equipando {itemName} - Daño: {damage}");
-            // PlayerCombat.Instance.EquipWeapon(this);
         }
         #endregion
     }

@@ -6,9 +6,6 @@ using System.Collections;
 
 public class UIController : MonoBehaviour
 {
-	#region Properties
-	#endregion
-
 	#region Fields
 	[SerializeField] private PlayerCoins _playerCoins;
 	[SerializeField] private PlayerBuffs _playerBuffs;
@@ -20,6 +17,9 @@ public class UIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI avocadoMessage;
     [SerializeField] private TextMeshProUGUI coconutMessage;
     [SerializeField] private float messageDuration = 2f;
+
+    [Header("Death Panel")]
+    [SerializeField] private GameObject deathPanel;
     #endregion
 
     #region Unity Callbacks
@@ -31,15 +31,26 @@ public class UIController : MonoBehaviour
             _healthSlider.value = _playerBuffs.CurrentHealth;
         }
 
+        PlayerHealth.OnHealthChanged += UpdateHealthSlider;
         PlayerBuffs.OnHealthChanged += OnHealthChanged;
         PlayerBuffs.OnAttackBoostChanged += OnAttackBoostChanged;
+        
 
         HideAllMessages();
+        if (deathPanel != null)
+            deathPanel.SetActive(false);
     }
 
     void Update()
     {
 		_collectedCoins.text = _playerCoins.ToString();
+    }
+    private void OnDestroy()
+    {
+        PlayerBuffs.OnHealthChanged -= OnHealthChanged;
+        PlayerBuffs.OnAttackBoostChanged -= OnAttackBoostChanged;
+       
+        PlayerHealth.OnHealthChanged -= UpdateHealthSlider;
     }
     #endregion
 
@@ -80,7 +91,14 @@ public class UIController : MonoBehaviour
             Debug.Log("UI: Buff visual desactivado");
         }
     }
-
+    private void OnPlayerDied()
+    {
+        if (deathPanel != null)
+        {
+            deathPanel.SetActive(true);
+            Time.timeScale = 0f;
+        }
+    }
     private void ShowMessage(TextMeshProUGUI messageText, string text)
     {
         if (messageText != null)
@@ -97,7 +115,14 @@ public class UIController : MonoBehaviour
         if (avocadoMessage != null) avocadoMessage.gameObject.SetActive(false);
         if (coconutMessage != null) coconutMessage.gameObject.SetActive(false);
     }
-
+    private void UpdateHealthSlider(float current, float max)
+    {
+        if (_healthSlider != null)
+        {
+            _healthSlider.maxValue = max;
+            _healthSlider.value = current;
+        }
+    }
     private IEnumerator HideMessageAfterDelay(TextMeshProUGUI messageText)
     {
         yield return new WaitForSeconds(messageDuration);

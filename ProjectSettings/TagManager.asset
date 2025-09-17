@@ -11,6 +11,7 @@ TagManager:
   - Teleporter
   - Enemy
   - Platform
+  - Weapon
   layers:
   - Default
   - TransparentFX

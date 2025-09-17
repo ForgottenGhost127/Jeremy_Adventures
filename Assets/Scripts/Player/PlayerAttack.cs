@@ -8,6 +8,7 @@ public class PlayerAttack : MonoBehaviour
     [Header("Attack Settings")]
     public Animator weaponAnimator;
     public float attackCooldown = 1f;
+    public float attackRange = 1.5f;
 
     private float lastAttackTime;
     #endregion
@@ -25,9 +26,7 @@ public class PlayerAttack : MonoBehaviour
         if (CanAttack())
         {
             weaponAnimator.SetTrigger("Attack");
-            int damage = PlayerBuffs.Instance.GetModifiedAttackDamage();
-            Debug.Log($"¡Ataque! Daño: {damage}");
-
+            DealDamage();
             lastAttackTime = Time.time;
         }
     }
@@ -49,13 +48,19 @@ public class PlayerAttack : MonoBehaviour
 
     private void DealDamage()
     {
-        int damage = InventorySystem.Instance.GetCurrentWeaponDamage();
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 1f);
+        int damage = PlayerBuffs.Instance.GetModifiedAttackDamage();
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
+
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Enemy"))
             {
-                hit.GetComponent<EnemyHealth>()?.TakeDamage(damage);
+                EnemyHealth enemyHealth = hit.GetComponent<EnemyHealth>();
+                if (enemyHealth != null)
+                {
+                    enemyHealth.TakeDamage(damage);
+                    Debug.Log($"¡Golpeaste al enemigo! Daño: {damage}");
+                }
             }
         }
     }

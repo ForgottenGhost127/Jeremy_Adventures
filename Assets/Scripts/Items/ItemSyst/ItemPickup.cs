@@ -44,7 +44,34 @@ public class ItemPickup : MonoBehaviour
     #region Public Methods
     public void Pickup()
     {
-        if(InventorySystem.Instance.AddItem(itemData, quantity))
+        bool addedToInventory = false;
+
+        if (itemData is Fruit fruit)
+        {
+            if (fruit.fruitType == FruitType.Healing)
+            {
+                if (PlayerBuffs.Instance.CurrentHealth < PlayerBuffs.Instance.MaxHealth)
+                {
+                    fruit.Use();
+                    Destroy(gameObject);
+                    return;
+                }
+                else
+                {
+                    addedToInventory = InventorySystem.Instance.AddItem(itemData, quantity);
+                }
+            }
+            else
+            {
+                addedToInventory = InventorySystem.Instance.AddItem(itemData, quantity);
+            }
+        }
+        else
+        {
+            addedToInventory = InventorySystem.Instance.AddItem(itemData, quantity);
+        }
+
+        if (addedToInventory)
         {
             Debug.Log($"Recogido: {itemData.name} x{quantity}");
             Destroy(gameObject);
@@ -79,6 +106,13 @@ public class ItemPickup : MonoBehaviour
             Pickup();
         }
     }
+
+    //Aplicar cuando se añada un UI de Inventario físico al juego para consumir objetos curativos/Buffs desde este y no de forma automatica
+    //if (selectedItem is Fruit fruit)
+    //{
+    //  fruit.Use();
+    //  InventorySystem.Instance.RemoveItem(selectedItem, 1);
+    //}
     #endregion
 
 }

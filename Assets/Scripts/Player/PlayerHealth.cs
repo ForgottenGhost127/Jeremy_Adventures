@@ -13,6 +13,8 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject _gameOverPanel;
+
+    public static event Action<float, float> OnHealthChanged;
     #endregion
 
     #region Unity Callbacks
@@ -26,8 +28,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Update()
     {
-        // Prueba opcional para restar vida:
-        // if (Input.GetKeyDown(KeyCode.Space)) TakeDamage(20f);
+        
     }
     #endregion
 
@@ -36,6 +37,7 @@ public class PlayerHealth : MonoBehaviour
     {
         CurrentHealth -= amount;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, _maxHealth);
+        OnHealthChanged?.Invoke(CurrentHealth, _maxHealth);
 
         if (CurrentHealth <= 0)
             Die();
@@ -45,6 +47,7 @@ public class PlayerHealth : MonoBehaviour
     {
         CurrentHealth += amount;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, _maxHealth);
+        OnHealthChanged?.Invoke(CurrentHealth, _maxHealth);
     }
     #endregion
 

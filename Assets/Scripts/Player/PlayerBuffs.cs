@@ -140,7 +140,6 @@ public class PlayerBuffs : MonoBehaviour
     private void Die()
     {
         Debug.Log("¡Player ha muerto!");
-        // Aquí puedes añadir lógica de muerte (reiniciar nivel, game over, etc.)
     }
     #endregion
 
